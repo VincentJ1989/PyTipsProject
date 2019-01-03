@@ -1,6 +1,8 @@
 # ZODB应用的例子--处理并发访问序列化
+import math
 import os
 
+import PIL.Image as Image
 import pydicom
 import pylab
 
@@ -24,13 +26,11 @@ print(first_patient[0].PatientName)
 
 # 显示单张数据图像
 print('显示单张数据图像')
-pylab(first_patient[0].pixel_array, cmap=pylab.cm.bone)
+pylab.imshow(first_patient[0].pixel_array, cmap=pylab.cm.bone)
 pylab.show()
 
 # 批量生产数据图像
 print('批量生产数据图像')
-import PIL.Image as Image
-import math
 
 
 def plot_ct_scan(scan):
@@ -43,11 +43,11 @@ def plot_ct_scan(scan):
     y = 0
     for i in range(0, length):
         # 生成img对象
-        img = Image.fromarray(scan[i].pixel_array.astype(int))
+        img = Image.fromarray(scan[i].pixel_array.astype(float))
         # 调整图片大小
-        img = img.resize(each_size, each_size, Image.ANYIALIAS)
+        img = img.resize((each_size, each_size), Image.ANTIALIAS)
         # 拼接图片
-        image.paset(img, x * each_size, y * each_size)
+        image.paste(img, (x * each_size, y * each_size))
         x += 1
         if x == lines:
             x = 0
